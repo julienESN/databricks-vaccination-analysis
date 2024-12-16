@@ -1,4 +1,4 @@
-# 🌍 **Projet d'Analyse des Données de Vaccination Mondiale**
+# 🌍 **Projet d'Analyse des Données de Vaccination Mondiale (Covid-19)**
 
 **👨‍💻 Auteurs :** Esnault Julien - Galaad - Sofiane  
 **📚 TP BIGDATA**  
