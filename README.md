@@ -10,6 +10,8 @@
 
 ---
 
+![BigDataImage](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTfo--_T2wY9gC1wJMuU54Otg28n5ZmBIOmQ&s)
+
 ## Présentation du Projet, des Données et des Objectifs
 
 **Présentation du projet :**  
@@ -22,6 +24,27 @@ python -m venv .venv
 source .venv/bin/activate  # sous Linux/Mac
 .venv\Scripts\activate     # sous Windows
 pip install -r requirements.txt
+```
+
+**Configuration de Spark sur Windows :**  
+Pour exécuter correctement Spark sous Windows, vous devez configurer `winutils.exe` :
+
+**Télécharger `winutils.exe`**  
+Téléchargez la version correspondante à Hadoop (ex: Hadoop 3.2.0) depuis GitHub. (https://github.com/steveloughran/winutils)
+Placez le fichier, par exemple, dans :  
+`C:\hadoop\bin\winutils.exe`
+
+**Variables d'environnement**  
+Ajoutez les variables d'environnement suivantes à votre système Windows :
+
+- `HADOOP_HOME` : `C:\hadoop`
+- Ajoutez `C:\hadoop\bin` à la variable `PATH`.
+
+**Création des répertoires nécessaires**  
+Exécutez la commande suivante pour définir les permissions et créer les dossiers requis :
+
+```bash
+C:\hadoop\bin\winutils.exe chmod -R 777 C:\tmp
 ```
 
 **Les données :**  
