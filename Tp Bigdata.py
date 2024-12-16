@@ -425,6 +425,104 @@ try:
 except Exception as e:
     print(f"Erreur lors de la validation : {e}")
 
+# --- Ajout d'une seconde source de données : Données journalières COVID-19 (cas et décès) ---
+
+# 1. Zone Bronze : Chargement des données journalières de cas et décès
+try:
+    file_location_cases = "data/WHO-COVID-19-global-daily-data.csv"  # Chemin exact vers le fichier
+    df_bronze_cases = spark.read.format("csv") \
+        .option("header", "true") \
+        .option("inferSchema", "true") \
+        .load(file_location_cases)
+
+    df_bronze_cases.printSchema()
+
+    # Sauvegarde en Delta (Bronze)
+    df_bronze_cases.write.format("delta").mode("overwrite").save("delta/bronze/who_covid_daily_cases")
+    print("Bronze : Données des cas et décès COVID-19 journaliers chargées avec succès.")
+except Exception as e:
+    print(f"Erreur lors de l'ingestion des données journalières COVID-19 : {e}")
+
+# 2. Zone Silver : Nettoyage des données journalières
+try:
+    # Colonnes du dataset :
+    # Date_reported, Country_code, Country, WHO_region, New_cases, Cumulative_cases, New_deaths, Cumulative_deaths
+    # Nous allons sélectionner ce qui nous intéresse :
+    # - DATE_UPDATED : converti depuis Date_reported
+    # - COUNTRY, WHO_REGION
+    # - NEW_DEATHS : pour comparaison
+    from pyspark.sql.functions import to_date
+
+    df_silver_cases = spark.read.format("delta").load("delta/bronze/who_covid_daily_cases") \
+        .select(
+            col("Country").alias("COUNTRY"),
+            col("WHO_region").alias("WHO_REGION"),
+            col("New_deaths").alias("NEW_DEATHS"),
+            to_date(col("Date_reported"), "yyyy-MM-dd").alias("DATE_UPDATED")
+        )
+
+    # Filtrer éventuellement les lignes sans date
+    df_silver_cases = df_silver_cases.filter(col("DATE_UPDATED").isNotNull())
+
+    # Sauvegarde en Delta (Silver)
+    df_silver_cases.write.format("delta").mode("overwrite").save("delta/silver/who_covid_daily_deaths_cleaned")
+    print("Silver : Données journalières des décès COVID-19 nettoyées et sauvegardées avec succès.")
+except Exception as e:
+    print(f"Erreur lors du nettoyage des données journalières COVID-19 : {e}")
+
+try:
+    # On part du principe que df_silver_cases est déjà créé et contient les colonnes :
+    # COUNTRY, WHO_REGION, NEW_DEATHS, DATE_UPDATED
+
+    from pyspark.sql.functions import sum as _sum, col, year, month
+
+    # Agrégation mensuelle des décès
+    deaths_by_month = df_silver_cases.groupBy(
+        year("DATE_UPDATED").alias("year"),
+        month("DATE_UPDATED").alias("month")
+    ).agg(_sum("NEW_DEATHS").alias("monthly_new_deaths"))
+
+    # Liste des dates que vous souhaitez conserver
+    target_dates = ["2022-07", "2022-09", "2022-11", "2023-01", "2023-03", "2023-05", "2023-07", "2023-09", "2023-11", "2024-01"]
+
+    # Convertir ces dates en paires (year, month)
+    target_year_month = []
+    for d in target_dates:
+        y, m = d.split("-")
+        target_year_month.append((int(y), int(m)))
+
+    # Convertir deaths_by_month en Pandas DataFrame
+    deaths_df = deaths_by_month.toPandas()
+
+    # Filtrer uniquement les lignes qui correspondent aux (year, month) désirés
+    filtered_deaths_df = deaths_df[deaths_df.apply(lambda row: (row['year'], row['month']) in target_year_month, axis=1)]
+
+    # Créer une colonne "Year-Month" pour l'affichage
+    filtered_deaths_df["Year-Month"] = filtered_deaths_df["year"].astype(str) + "-" + filtered_deaths_df["month"].astype(str).str.zfill(2)
+
+    # Tri par année et mois si nécessaire
+    filtered_deaths_df = filtered_deaths_df.sort_values(by=["year", "month"])
+
+    # Visualisation
+    import matplotlib.pyplot as plt
+
+    plt.figure(figsize=(10,6))
+    # On trace uniquement la courbe des décès mensuels
+    plt.plot(filtered_deaths_df["Year-Month"], filtered_deaths_df["monthly_new_deaths"], label="Monthly New Deaths", marker='x', color='red')
+
+    plt.xlabel("Year-Month")
+    plt.ylabel("Monthly New Deaths")
+    plt.title("Monthly New Deaths for Selected Months")
+    plt.xticks(rotation=45)
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+except Exception as e:
+    print(f"Erreur lors de l'affichage des données : {e}")
+
+
 
 # COMMAND ----------
 
