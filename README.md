@@ -39,12 +39,20 @@ Ajoutez les variables d'environnement suivantes à votre système Windows :
 - `HADOOP_HOME` : `C:\hadoop`
 - Ajoutez `C:\hadoop\bin` à la variable `PATH`.
 
-**📂 Création des répertoires nécessaires**  
-Exécutez la commande suivante pour définir les permissions et créer les dossiers requis :
+---
 
-```bash
-C:\hadoop\bin\winutils.exe chmod -R 777 C:\tmp
-```
+**📂 Création des répertoires nécessaires**  
+Pour garantir le bon fonctionnement de Spark sous Windows, il est essentiel de créer un répertoire temporaire **`tmp`** à la racine de **`C:\`** et de définir les permissions appropriées.  
+
+1. **Créer le répertoire `tmp`** :  
+   Exécutez la commande suivante dans PowerShell ou Git Bash :  
+   ```bash
+   mkdir C:\tmp
+    ```
+
+    ```bash
+    C:\hadoop\bin\winutils.exe chmod -R 777 C:\tmp
+    ```
 
 **📊 Les données :**  
 Les données proviennent de sources publiques (ex. WHO) et contiennent :
