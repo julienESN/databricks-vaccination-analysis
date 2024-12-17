@@ -129,6 +129,9 @@ Ce modèle en étoile permet des analyses rapides et ciblées.
 
 3. **📅 Analyse temporelle annuelle** :  
      Graphique linéaire affichant la progression des vaccinations cumulées par année, mettant en évidence la tendance globale.
+   
+5. **🪦 Progression des décès liés au COVID** :  
+     Graphique linéaire illustrant l'évolution cumulative des décès liés au COVID-19 dans le temps, avec une granularité par pays et région. Ce graphique permet de comparer les tendances entre les régions et d'analyser l'impact de la vaccination sur la mortalité.
 
 ---
 
