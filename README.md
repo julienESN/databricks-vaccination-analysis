@@ -25,8 +25,66 @@ source .venv/Scripts/activate
 pip install -r requirements.txt
 ```
 
+# Pré-requis : Installation de Java 8
+
+Pour assurer la compatibilité avec Spark, il est **nécessaire d’installer Java 8**. L’installateur vous demandera d’indiquer l’emplacement de Java durant l’installation. Après l’installation, vous devez définir la variable d’environnement `JAVA_HOME` pour qu’elle pointe vers le répertoire d’installation de Java 8.
+
+## Télécharger Java 8 (OpenJDK)
+
+Vous pouvez télécharger Java 8 (OpenJDK) depuis le lien suivant :  
+[Liste de téléchargements OpenJDK 8](https://www.openlogic.com/openjdk-downloads?page=7)
+
+### Téléchargements directs :
+
+- **Windows :**  
+  [OpenJDK 8 pour Windows 64-bit](https://builds.openlogic.com/downloadJDK/openlogic-openjdk/8u412-b08/openlogic-openjdk-8u412-b08-windows-x64.msi)
+
+- **macOS :**  
+  [OpenJDK 8 pour macOS 64-bit](https://builds.openlogic.com/downloadJDK/openlogic-openjdk/8u412-b08/openlogic-openjdk-8u412-b08-mac-x64.pkg)
+
+- **Linux :**  
+  [OpenJDK 8 pour Linux 64-bit (Debian/Ubuntu)](https://builds.openlogic.com/downloadJDK/openlogic-openjdk/8u412-b08/openlogic-openjdk-8u412-b08-linux-x64-deb.deb)
+
+## Configurer la variable d’environnement `JAVA_HOME`
+
+### Sur Windows :
+
+1. **Installer Java 8 :**  
+   Exécutez le fichier `.msi` téléchargé et suivez les instructions de l’installateur. Lors de l’installation, l’installateur vous demandera de définir `JAVA_HOME`. Acceptez cette option.
+
+2. **Vérifier et définir manuellement `JAVA_HOME` (si nécessaire) :**  
+   - Ouvrez le *Panneau de configuration* > *Système* > *Paramètres système avancés* > *Variables d’environnement*.
+   - Créez une nouvelle variable `JAVA_HOME` pointant vers le dossier d’installation de Java 8, par exemple :  
+     ```
+     C:\Program Files\Java\jdk1.8.0_xxx
+     ```
+   - Ajoutez `%JAVA_HOME%\bin` à la variable `PATH`.
+  
+   Remplacez /chemin/vers/java8 par le chemin réel d’installation de Java 8 sur votre système.
+   
+```bash
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+export PATH=$JAVA_HOME/bin:$PATH
+```
+
+### Sur macOS et Linux :
+
+1. **Installer Java 8 :**  
+   Exécutez le fichier `.pkg` (macOS) ou `.deb` (Linux) téléchargé et suivez les instructions de l’installateur.
+
+2. **Définir `JAVA_HOME` :**  
+   Ajoutez les lignes suivantes à votre fichier de configuration de shell (`~/.bashrc`, `~/.zshrc`, etc.) :
+   ```bash
+   export JAVA_HOME=/chemin/vers/java8
+   export PATH=$JAVA_HOME/bin:$PATH
+
 **🛠️ Configuration de Spark sur Windows :**  
 Pour exécuter correctement Spark sous Windows, vous devez configurer `winutils.exe` :
+
+**📥 Télécharger `winutils.exe`**  
+Téléchargez la version correspondante à Hadoop (ex: Hadoop 3.2.0) depuis GitHub. (https://github.com/steveloughran/winutils)  
+Placez le fichier, par exemple, dans :  
+`C:\hadoop\bin\winutils.exe`
 
 **📥 Télécharger `winutils.exe`**  
 Téléchargez la version correspondante à Hadoop (ex: Hadoop 3.2.0) depuis GitHub. (https://github.com/steveloughran/winutils)  
