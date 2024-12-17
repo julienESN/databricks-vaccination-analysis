@@ -21,8 +21,7 @@ Ce projet vise à mettre en place une architecture Lakehouse pour le traitement 
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate  # sous Linux/Mac
-.venv\Scripts\activate     # sous Windows
+source .venv/Scripts/activate
 pip install -r requirements.txt
 ```
 
